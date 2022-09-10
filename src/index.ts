@@ -3,8 +3,12 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
+import { MainAreaWidget, ToolbarButton } from '@jupyterlab/apputils';
+import { ILauncher } from '@jupyterlab/launcher';
+import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-
+import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
+import { imageIcon } from '@jupyterlab/ui-components';
 import { requestAPI } from './handler';
 
 /**
@@ -13,10 +17,18 @@ import { requestAPI } from './handler';
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'wooty_woot:plugin',
   autoStart: true,
-  optional: [ISettingRegistry],
-  activate: (app: JupyterFrontEnd, settingRegistry: ISettingRegistry | null) => {
+  optional: [ISettingRegistry, ILauncher, IMainMenu, IFileBrowserFactory],
+  activate: (
+    app: JupyterFrontEnd, 
+    settingRegistry: ISettingRegistry | null,
+    launcher: ILauncher | null,
+    fileBrowser: IFileBrowserFactory,
+  ) => {
     console.log('JupyterLab extension wooty_woot is activated!');
 
+    // Load the settings from schema/plugin.json
+    // This can include adding commands to a context menu
+    // or to the main or other menu
     if (settingRegistry) {
       settingRegistry
         .load(plugin.id)
@@ -26,6 +38,42 @@ const plugin: JupyterFrontEndPlugin<void> = {
         .catch(reason => {
           console.error('Failed to load settings for wooty_woot.', reason);
         });
+    }
+
+    app.commands.addCommand('wooty_woot:open', {
+      // code to run when this command is executed
+      execute: () => {
+        // const widget = new TutorialWidget();
+        // const main = new MainAreaWidget({ content: widget });
+        // const button = new ToolbarButton({icon: refreshIcon, onClick: () => widget.load_image()});
+
+        // main.title.label = 'Tutorial Widget';
+        // main.title.icon = imageIcon;
+        // main.title.caption = widget.title.label;
+
+        // // TODO: add a button to refresh image
+        // main.toolbar.addItem('Refresh', button);
+        // app.shell.add(main, 'main');
+        const reply = requestAPI<any>(
+          'image', 
+          {
+            body: JSON.stringify({'path': fileBrowser.defaultBrowser.model.path}), 
+            method: 'POST'
+          }
+        );
+        console.log("Aaaand I'm back", reply);
+        // widget.make_a_file(fileBrowser.defaultBrowser.model.path);
+      },
+      icon: imageIcon,
+      label: 'Open Tutorial Widget'
+    });
+
+    // Add item to launcher
+    if (launcher) {
+      launcher.add({
+        command: 'tutorial:open',
+        category: 'Moo'
+      });
     }
 
     requestAPI<any>('get_example')
