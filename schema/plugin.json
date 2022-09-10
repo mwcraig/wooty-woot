@@ -12,8 +12,7 @@
         "label": "My Menu",
         "items": [
           {
-            "label": "My awesome thingy",
-            "command": "tutorial:open",
+            "command": "wooty_woot:open",
             "rank": 500
           }
         ],

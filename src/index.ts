@@ -3,9 +3,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { MainAreaWidget, ToolbarButton } from '@jupyterlab/apputils';
 import { ILauncher } from '@jupyterlab/launcher';
-import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { imageIcon } from '@jupyterlab/ui-components';
@@ -17,7 +15,7 @@ import { requestAPI } from './handler';
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'wooty_woot:plugin',
   autoStart: true,
-  optional: [ISettingRegistry, ILauncher, IMainMenu, IFileBrowserFactory],
+  optional: [ISettingRegistry, ILauncher, IFileBrowserFactory],
   activate: (
     app: JupyterFrontEnd, 
     settingRegistry: ISettingRegistry | null,
@@ -55,7 +53,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         // main.toolbar.addItem('Refresh', button);
         // app.shell.add(main, 'main');
         const reply = requestAPI<any>(
-          'image', 
+          'viewer', 
           {
             body: JSON.stringify({'path': fileBrowser.defaultBrowser.model.path}), 
             method: 'POST'
@@ -71,12 +69,12 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Add item to launcher
     if (launcher) {
       launcher.add({
-        command: 'tutorial:open',
+        command: 'wooty_woot:open',
         category: 'Moo'
       });
     }
 
-    requestAPI<any>('get_example')
+    requestAPI<any>('viewer')
       .then(data => {
         console.log(data);
       })
