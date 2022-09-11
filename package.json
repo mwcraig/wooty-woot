@@ -1,6 +1,6 @@
 {
   "name": "wooty_woot",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A pkg that makes wooty_woot notebooks",
   "keywords": [
     "jupyter",
@@ -59,8 +59,8 @@
     "@jupyterlab/settingregistry": "^3.1.0",
     "@jupyterlab/coreutils": "^5.1.0",
     "@jupyterlab/services": "^6.1.0",
-    "@jupyterlab/launcher": "^3.2.4",
-    "@jupyterlab/ui-components": "^3.2.4"
+    "@jupyterlab/launcher": "^3.1.0",
+    "@jupyterlab/ui-components": "^3.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
