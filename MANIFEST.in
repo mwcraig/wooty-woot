@@ -4,6 +4,7 @@ include pyproject.toml
 recursive-include jupyter-config *.json
 include conftest.py
 
+global-include *.ipynb
 include package.json
 include install.json
 include ts*.json
