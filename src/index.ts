@@ -7,6 +7,8 @@ import { ILauncher } from '@jupyterlab/launcher';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { imageIcon } from '@jupyterlab/ui-components';
+import { NotebookModel } from '@jupyterlab/notebook';
+
 import { requestAPI } from './handler';
 
 /**
@@ -59,7 +61,26 @@ const plugin: JupyterFrontEndPlugin<void> = {
             method: 'POST'
           }
         );
-        console.log("Aaaand I'm back", reply);
+        console.log("Aaaand I'm back");
+        console.log(reply)
+        reply.then(data => {
+          console.log(data);
+          const model = new NotebookModel();
+          model.fromString(data["content"]);
+          //app.shell.content.model = model;
+          console.log(model);
+          app.commands.execute(
+            "notebook:create-new",
+            { activate: true }
+          ).then(notebook => {
+            notebook.content.model = model;
+          });
+          ///const panel = new NotebookWidgetFactory(context=model);
+        });
+
+        //
+        //
+
         // widget.make_a_file(fileBrowser.defaultBrowser.model.path);
       },
       icon: imageIcon,
