@@ -6,6 +6,7 @@ import {
 import { ILauncher } from '@jupyterlab/launcher';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
+import { IDocumentManager } from '@jupyterlab/docmanager';
 import { imageIcon } from '@jupyterlab/ui-components';
 import { NotebookModel } from '@jupyterlab/notebook';
 
@@ -17,12 +18,13 @@ import { requestAPI } from './handler';
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'wooty_woot:plugin',
   autoStart: true,
-  optional: [ISettingRegistry, ILauncher, IFileBrowserFactory],
+  optional: [ISettingRegistry, ILauncher, IFileBrowserFactory, IDocumentManager],
   activate: (
     app: JupyterFrontEnd, 
     settingRegistry: ISettingRegistry | null,
     launcher: ILauncher | null,
     fileBrowser: IFileBrowserFactory,
+    docManager: IDocumentManager | null
   ) => {
     console.log('JupyterLab extension wooty_woot is activated!');
 
@@ -87,10 +89,53 @@ const plugin: JupyterFrontEndPlugin<void> = {
       label: 'Open Tutorial Widget'
     });
 
+    app.commands.addCommand('wooty_woot:open2', {
+      // code to run when this command is executed
+      execute: () => {
+        // const widget = new TutorialWidget();
+        // const main = new MainAreaWidget({ content: widget });
+        // const button = new ToolbarButton({icon: refreshIcon, onClick: () => widget.load_image()});
+
+        // main.title.label = 'Tutorial Widget';
+        // main.title.icon = imageIcon;
+        // main.title.caption = widget.title.label;
+
+        // // TODO: add a button to refresh image
+        // main.toolbar.addItem('Refresh', button);
+        // app.shell.add(main, 'main');
+        const reply = requestAPI<any>(
+          'miewer', 
+          {
+            body: JSON.stringify({'path': fileBrowser.defaultBrowser.model.path}), 
+            method: 'POST'
+          }
+        );
+        console.log("I am back in open2");
+        console.log(reply)
+        reply.then(data => {
+          console.log(data);
+          if (docManager) {
+            docManager.open(data['path']);
+          }
+          ///const panel = new NotebookWidgetFactory(context=model);
+        });
+
+        //
+        //
+
+        // widget.make_a_file(fileBrowser.defaultBrowser.model.path);
+      },
+      icon: imageIcon,
+      label: 'Open TWOOOOO'
+    });
     // Add item to launcher
     if (launcher) {
       launcher.add({
         command: 'wooty_woot:open',
+        category: 'Moo'
+      });
+      launcher.add({
+        command: 'wooty_woot:open2',
         category: 'Moo'
       });
     }
