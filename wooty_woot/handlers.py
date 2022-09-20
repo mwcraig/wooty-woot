@@ -1,10 +1,18 @@
 import json
 from pathlib import Path
-from importlib.resources import read_text
+from importlib.resources import files
 
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 import tornado
+
+
+def hello():
+    """
+    Return the contents of the hello world notebook.
+    """
+    return files('wooty_woot').joinpath('notebooks').joinpath('hello.ipynb').read_text()
+
 
 class RouteHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
@@ -23,7 +31,7 @@ class RouteHandler(APIHandler):
         input_data = self.get_json_body()
         # p = Path('.')
         # (p / input_data['path'] / 'wooty-woot.ipynb').touch()
-        nb_content = read_text('wooty_woot.notebooks', 'hello.ipynb')
+        nb_content = hello()
         response = {
             'filename': 'hello.ipynb',
             'content': nb_content
@@ -47,7 +55,7 @@ class RouteHandler2(APIHandler):
     def post(self):
         input_data = self.get_json_body()
         p = Path('.')
-        nb_content = read_text('wooty_woot.notebooks', 'hello.ipynb')
+        nb_content = hello()
 
         (p / input_data['path'] / 'hello.ipynb').write_text(nb_content)
         response = {
